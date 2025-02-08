@@ -8,7 +8,7 @@ import "./assets/vendor/glightbox/css/glightbox.min.css";
 import "./assets/vendor/swiper/swiper-bundle.min.css";
 import "./assets/css/main.css";
 import "./assets/css/fonts.css";
-
+import favicon from "./assets/img/favicon.webp";
 
 function App() {
   const [name, setName] = useState("");
@@ -18,6 +18,14 @@ function App() {
   const [otherOccupation, setOtherOccupation] = useState("");
   const [organization, setOrganization] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    document.title = "Flowt";
+    const link = document.createElement("link");
+    link.rel = "icon";
+    link.href = favicon;
+    document.head.appendChild(link);
+  }, []);
 
   useEffect(() => {
     AOS.init({
@@ -92,6 +100,7 @@ function App() {
 
   return (
     <div>
+
       <header id="header" className="header d-flex align-items-center fixed-top">
         <div className="container-fluid container-xl position-relative d-flex align-items-center">
           <a href="#" className="logo d-flex align-items-center me-auto">
