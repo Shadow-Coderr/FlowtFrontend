@@ -7,6 +7,7 @@ import "./assets/vendor/aos/aos.css";
 import "./assets/vendor/glightbox/css/glightbox.min.css";
 import "./assets/vendor/swiper/swiper-bundle.min.css";
 import "./assets/css/main.css";
+import "./assets/css/fonts.css";
 
 
 function App() {
@@ -337,6 +338,9 @@ function App() {
                   <div className="member-info">
                     <h4>Kush Jain</h4>
                     <span>Dalla</span>
+                    <div class="social">
+                      <a href=""> <i class="bi bi-linkedin"></i> </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -353,6 +357,9 @@ function App() {
                   <div className="member-info">
                     <h4>Sukhpreet Singh</h4>
                     <span>CTO</span>
+                    <div class="social">
+                      <a href=""> <i class="bi bi-linkedin"></i> </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -369,6 +376,28 @@ function App() {
                   <div className="member-info">
                     <h4>Vedant Tamhane</h4>
                     <span>CTO</span>
+                    <div class="social">
+                      <a href=""> <i class="bi bi-linkedin"></i> </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="col-lg-6"
+                data-aos="fade-up"
+                data-aos-delay="100"
+              >
+                <div className="team-member d-flex align-items-start">
+                  <div className="pic">
+                    <img src="" className="img-fluid" alt="" />
+                  </div>
+                  <div className="member-info">
+                    <h4>Parth Agrawal</h4>
+                    <div class="social">
+                      <a href=""> <i class="bi bi-linkedin"></i> </a>
+                    </div>
+                    <span>Dalla</span>
                   </div>
                 </div>
               </div>
@@ -545,6 +574,14 @@ function App() {
                 <li>
                   <i className="bi bi-chevron-right"></i>{' '}
                   <a href="#">About us</a>
+                </li>
+                <li>
+                  <i className="bi bi-chevron-right"></i>{' '}
+                  <a href="#">Team</a>
+                </li>
+                <li>
+                  <i className="bi bi-chevron-right"></i>{' '}
+                  <a href="#">Contact us</a>
                 </li>
               </ul>
             </div>
