@@ -1,6 +1,7 @@
 import AOS from "aos";
 import "aos/dist/aos.css";
 import React, { useState, useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./assets/vendor/bootstrap/css/bootstrap.min.css";
 import "./assets/vendor/bootstrap-icons/bootstrap-icons.css";
 import "./assets/vendor/aos/aos.css";
@@ -18,14 +19,11 @@ function App() {
   const [otherOccupation, setOtherOccupation] = useState("");
   const [organization, setOrganization] = useState("");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    document.title = "Flowt";
-    const link = document.createElement("link");
-    link.rel = "icon";
-    link.href = favicon;
-    document.head.appendChild(link);
-  }, []);
+  const [cname, setcName] = useState("");
+  const [cemail, setcEmail] = useState("");
+  const [csub, setcsub] = useState("");
+  const [cmsg, setcmsg] = useState("");
+  const [cloading, setcLoading] = useState(false);
 
   useEffect(() => {
     AOS.init({
@@ -53,6 +51,8 @@ function App() {
     const nameRegex = /^[a-zA-Z\s]{2,}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^[6-9]\d{9}$/;
+    const occupationRegex = /^[a-zA-Z\s]{2,}$/;
+    const organizationRegex = /^[a-zA-Z\s]{2,}$/;
 
     if (!nameRegex.test(name)) {
       alert("Name should contain only letters and spaces (min 2 characters).");
@@ -66,13 +66,21 @@ function App() {
       alert("Phone number should be 10 digits and start with 6, 7, 8, or 9.");
       return;
     }
+    if (!occupationRegex.test(finalOccupation)) {
+      alert("Occupation should contain only letters and spaces (min 2 characters)."); 
+      return;
+    }
+    if (!organizationRegex.test(organization)) {
+      alert("Organization name should contain only letters and spaces (min 2 characters)."); 
+      return;
+    }
 
     setLoading(true);
 
     const formData = { name, email, phone, occupation: finalOccupation, organization };
 
     try {
-      const response = await fetch("https://api.flowt.co.in/v1/pre-register", {
+      const response = await fetch("https://api.flowt.co.in/dev/pre-register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         mode: "cors",
@@ -97,6 +105,93 @@ function App() {
       setLoading(false);
     }
   };
+
+  const handleSubmitContactus = async (event) => {
+    event.preventDefault();
+
+    // let finalOccupation = occupation === "Other" ? otherOccupation.trim() : occupation;
+
+    // // Input validations
+    // const nameRegex = /^[a-zA-Z\s]{2,}$/;
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // const phoneRegex = /^[6-9]\d{9}$/;
+    // const occupationRegex = /^[a-zA-Z\s]{2,}$/;
+    // const organizationRegex = /^[a-zA-Z\s]{2,}$/;
+
+    // if (!nameRegex.test(name)) {
+    //   alert("Name should contain only letters and spaces (min 2 characters).");
+    //   return;
+    // }
+    // if (!emailRegex.test(email)) {
+    //   alert("Please enter a valid email address.");
+    //   return;
+    // }
+    // if (!phoneRegex.test(phone)) {
+    //   alert("Phone number should be 10 digits and start with 6, 7, 8, or 9.");
+    //   return;
+    // }
+    // if (!occupationRegex.test(finalOccupation)) {
+    //   alert("Occupation should contain only letters and spaces (min 2 characters)."); 
+    //   return;
+    // }
+    // if (!organizationRegex.test(organization)) {
+    //   alert("Organization name should contain only letters and spaces (min 2 characters)."); 
+    //   return;
+    // }
+
+    setcLoading(true);
+    const name= cname;
+    const email= cemail;
+    const subject= csub;
+    const message= cmsg;
+    const formData = { name, email, subject, message }; 
+
+    try {
+      const response = await fetch("https://api.flowt.co.in/dev/contact-us", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        mode: "cors",
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        alert("Message Sent successful!");
+        setcName("");
+        setcEmail("");
+        setcsub("");
+        setcmsg("");
+      } else {
+        alert("Failed to send. Please try again later.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to send. Please check your network connection.");
+    } finally {
+      setcLoading(false);
+    }
+  };
+
+  const [userCount, setUserCount] = useState(0);
+
+  // Function to fetch user count from the API
+  const fetchUserCount = async () => {
+    try {
+      setLoading(true);
+      // Replace this URL with your backend API endpoint
+      const response = await fetch("https://api.flowt.co.in/dev/pre-register-count");
+      const data = await response.json();
+      setUserCount(data.total_count || 0);
+      console.log(data.total_count)
+    } catch (error) {
+      console.error("Error fetching user count:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserCount();
+  }, []);
 
   return (
     <div>
@@ -169,6 +264,13 @@ function App() {
           </div>
         </section>
 
+        {/* <div className="d-flex flex-column align-items-center justify-content-center">
+          <Card style={{ width: '18rem', backgroundColor: 'green' }} className="text-white text-center">
+            <Card.Body>
+              <h5 className="card-title">Preregistered users: {userCount}</h5>
+            </Card.Body>
+          </Card>
+        </div> */}
 
         {/* Preregister section */}
         <section id="preregistration" className="preregistration section">
@@ -180,6 +282,7 @@ function App() {
               >
                 <h1>Pre-Register Now</h1>
                 <p>Secure your spot by providing your details below.</p>
+                <h4>Preregistered Users: {userCount}</h4>
                 <form id="preregistration-form" className="w-50" onSubmit={handleSubmit}>
                   <div className="mb-3">
                     <input
@@ -346,10 +449,30 @@ function App() {
                   </div>
                   <div className="member-info">
                     <h4>Kush Jain</h4>
-                    <span>Dalla</span>
+                    <span>CEO</span>
                     <div class="social">
-                      <a href=""> <i class="bi bi-linkedin"></i> </a>
+                      <a href="https://www.linkedin.com/in/kushjain7/" target="_blank" rel="noopener noreferrer"> <i class="bi bi-linkedin"></i> </a>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="col-lg-6"
+                data-aos="fade-up"
+                data-aos-delay="100"
+              >
+                <div className="team-member d-flex align-items-start">
+                  <div className="pic">
+                    <img src="" className="img-fluid" alt="" />
+                  </div>
+                  <div className="member-info">
+                    <h4>Parth Agrawal</h4>
+                    <span>CMO</span>
+                    <div class="social">
+                      <a href="http://linkedin.com/in/parth-agrawal176" target="_blank" rel="noopener noreferrer"> <i class="bi bi-linkedin"></i> </a>
+                    </div>
+                    
                   </div>
                 </div>
               </div>
@@ -367,7 +490,7 @@ function App() {
                     <h4>Sukhpreet Singh</h4>
                     <span>CTO</span>
                     <div class="social">
-                      <a href=""> <i class="bi bi-linkedin"></i> </a>
+                      <a href="https://www.linkedin.com/in/sukhpreet-singh-a814b2227/"  target="_blank" rel="noopener noreferrer"> <i class="bi bi-linkedin"></i> </a>
                     </div>
                   </div>
                 </div>
@@ -386,30 +509,13 @@ function App() {
                     <h4>Vedant Tamhane</h4>
                     <span>CTO</span>
                     <div class="social">
-                      <a href=""> <i class="bi bi-linkedin"></i> </a>
+                      <a href="https://www.linkedin.com/in/vedant-tamhane?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAADr9pMkBerEz62eY3btH8LHcRmd9bt4efIg&lipi=urn%3Ali%3Apage%3Ad_flagship3_search_srp_all%3BsHmkKPfsRWO4doqgm73dqw%3D%3D" target="_blank" rel="noopener noreferrer" > <i class="bi bi-linkedin"></i> </a>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div
-                className="col-lg-6"
-                data-aos="fade-up"
-                data-aos-delay="100"
-              >
-                <div className="team-member d-flex align-items-start">
-                  <div className="pic">
-                    <img src="" className="img-fluid" alt="" />
-                  </div>
-                  <div className="member-info">
-                    <h4>Parth Agrawal</h4>
-                    <div class="social">
-                      <a href=""> <i class="bi bi-linkedin"></i> </a>
-                    </div>
-                    <span>Dalla</span>
-                  </div>
-                </div>
-              </div>
+      
             </div>
           </div>
         </section>
@@ -448,7 +554,7 @@ function App() {
                     <i className="bi bi-telephone flex-shrink-0"></i>
                     <div>
                       <h3>Call Us</h3>
-                      <p>+91 8770936337</p>
+                      <p>+91 9220134573</p>
                     </div>
                   </div>
 
@@ -464,21 +570,21 @@ function App() {
                     </div>
                   </div>
 
-                  {/* <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d48389.78314118045!2d-74.006138!3d40.710059!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a22a3bda30d%3A0xb89d1fe6bc499443!2sDowntown%20Conference%20Center!5e0!3m2!1sen!2sus!4v1676961268712!5m2!1sen!2sus"
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d3504.704254107123!2d77.18394552511414!3d28.54860782571061!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sVindhyachal%20hostel!5e0!3m2!1sen!2sin!4v1739210694283!5m2!1sen!2sin"
                     frameBorder="0"
                     style={{ border: 0, width: '100%', height: '270px' }}
                     allowFullScreen=""
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                     title="Google Map"
-                  ></iframe> */}
+                  ></iframe> 
                 </div>
               </div>
 
               <div className="col-lg-7">
                 <form
-                  action="forms/contact.php"
+                  onSubmit={handleSubmitContactus}
                   method="post"
                   className="php-email-form"
                   data-aos="fade-up"
@@ -494,6 +600,7 @@ function App() {
                         name="name"
                         id="name-field"
                         className="form-control"
+                        onChange={(e) => setcName(e.target.value)}
                         required
                       />
                     </div>
@@ -507,6 +614,7 @@ function App() {
                         className="form-control"
                         name="email"
                         id="email-field"
+                        onChange={(e) => setcEmail(e.target.value)}
                         required
                       />
                     </div>
@@ -520,6 +628,7 @@ function App() {
                         className="form-control"
                         name="subject"
                         id="subject-field"
+                        onChange={(e) => setcsub(e.target.value)}
                         required
                       />
                     </div>
@@ -533,18 +642,16 @@ function App() {
                         name="message"
                         rows="10"
                         id="message-field"
+                        onChange={(e) => setcmsg(e.target.value)}
                         required
                       ></textarea>
                     </div>
 
                     <div className="col-md-12 text-center">
-                      <div className="loading">Loading</div>
-                      <div className="error-message"></div>
-                      <div className="sent-message">
-                        Your message has been sent. Thank you!
-                      </div>
+                    
+                      <button type="submit" disabled={cloading}>
 
-                      <button type="submit">Send Message</button>
+                      {cloading ? 'Sending...' : 'Send Message'}</button>
                     </div>
                   </div>
                 </form>
@@ -565,7 +672,7 @@ function App() {
                 <p>IIT Delhi, Hauz Khas</p>
                 <p>New Delhi, 110016</p>
                 <p className="mt-3">
-                  <strong>Phone:</strong> <span>+91 8770936337</span>
+                  <strong>Phone:</strong> <span>+91 9220134573</span>
                 </p>
                 <p>
                   <strong>Email:</strong> <span>admin@flowt.co.in</span>
